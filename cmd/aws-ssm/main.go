@@ -48,8 +48,10 @@ func init() {
 			}(),
 		},
 	}
-	app.Before = func(*cli.Context) (err error) {
-		if cfg, err = external.LoadDefaultAWSConfig(); err == nil {
+	app.Before = func(c *cli.Context) (err error) {
+		region := external.WithRegion(c.String("region"))
+		profile := external.WithSharedConfigProfile(c.String("profile"))
+		if cfg, err = external.LoadDefaultAWSConfig(region, profile); err == nil {
 			svc = ssm.New(cfg)
 		}
 		return err

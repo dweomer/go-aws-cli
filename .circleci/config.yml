@@ -1,0 +1,24 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/dweomer/go-aws-cli
+    steps:
+      - checkout
+      # install dep
+      - run: mkdir -vp /tmp/bin
+      - run: curl -fsSL --output /tmp/bin/dep 'https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64'
+      - run: chmod -v +x /tmp/bin/dep
+      - run: echo 'export PATH=/tmp/bin:$PATH' >> $BASH_ENV
+      # get dependencies
+      - run: dep ensure -v
+      # build, test, and vet
+      - run: go install -v ./...
+      - run: go test -v ./...
+      - run: go vet -v ./...

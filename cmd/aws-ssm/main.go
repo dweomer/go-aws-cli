@@ -5,7 +5,6 @@ import (
 	"os"
 	"sort"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/urfave/cli"
@@ -13,7 +12,6 @@ import (
 
 var (
 	app = cli.NewApp()
-	cfg aws.Config
 	svc *ssm.SSM
 )
 
@@ -49,9 +47,14 @@ func init() {
 		},
 	}
 	app.Before = func(c *cli.Context) (err error) {
-		region := external.WithRegion(c.String("region"))
-		profile := external.WithSharedConfigProfile(c.String("profile"))
-		if cfg, err = external.LoadDefaultAWSConfig(region, profile); err == nil {
+		env, err := external.NewEnvConfig()
+		if err != nil {
+			return err
+		}
+		env.Region = c.GlobalString("region")
+		env.SharedConfigProfile = c.GlobalString("profile")
+
+		if cfg, err := external.LoadDefaultAWSConfig(env); err == nil {
 			svc = ssm.New(cfg)
 		}
 		return err

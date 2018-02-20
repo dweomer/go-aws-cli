@@ -12,6 +12,7 @@ func init() {
 		Name:    "list",
 		Aliases: []string{"ls"},
 		Action:  listParameters,
+		Usage:   "List Parameters",
 	}
 
 	cmdGet := cli.Command{
@@ -24,6 +25,8 @@ func init() {
 				Usage: "(default: false)",
 			},
 		},
+		ArgsUsage: "<name>",
+		Usage:     "Read Parameter",
 	}
 
 	cmdPut := cli.Command{
@@ -51,6 +54,8 @@ func init() {
 				Usage: "(default: false)",
 			},
 		},
+		ArgsUsage: "<name> <value>",
+		Usage:     "Write Parameter",
 	}
 
 	app.Commands = append(app.Commands, cli.Command{
@@ -61,6 +66,7 @@ func init() {
 			cmdGet,
 			cmdPut,
 		},
+		Category: "RESOURCES",
 	})
 }
 
